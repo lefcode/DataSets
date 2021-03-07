@@ -274,7 +274,7 @@ def ageAnalysis(merged_dataset):
     overall_income = dict(Counter(pink_cab_ages_classes_incomes) + Counter(yellow_cab_ages_classes_incomes))
     plt.pie(overall_income.values(), labels=ages_classes, startangle=90, shadow=True, autopct='%1.1f%%')
     plt.title('Cab Market pie plot')
-    plt.savefig("piePlot.png")
+    plt.savefig(scriptPath+"/piePlot.png")
 
     plotBar(ages_classes, pink_cab_ages_classes_incomes.values(), yellow_cab_ages_classes_incomes.values(),
             "Age class", "Company Income", "Company Income per age class", "ageAnalysis", rotate="horizontal")
