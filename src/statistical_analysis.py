@@ -28,7 +28,7 @@ def customerProfileAnalysis(merged_dataset):
 
 def plotBar(labels, values1, values2, xtitle, ytitle, plot_title, plot_name, rotate="vertical"):
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=((13,5)))
     bar_width = 0.35
     X = np.arange(len(labels))
     plt.bar(X, values1, bar_width, color='pink', label='Pink Cab')
@@ -97,7 +97,9 @@ def outliersHandling(merged_dataset, feature):
 
 
 def totalIncomeTable(merged_dataset):
-    columns = ("Cab company", "Total income", "Total rides", "Average price per ride")
+    #columns = ("Cab company", "Total income", "Total rides", "Average price per ride")
+    columns = ("","Pink Cab", "Yellow Cab")
+
     # total income computation
     earnings = merged_dataset.groupby(["Company"]).sum()["Price Charged"]
     expenditures = merged_dataset.groupby(["Company"]).sum()["Cost of Trip"]
@@ -113,20 +115,29 @@ def totalIncomeTable(merged_dataset):
     pink_cab_average = "%.2f" % (pink_cab_income / pink_cab_rides)
     yellow_cab_average = "%.2f" % (yellow_cab_income / yellow_cab_rides)
 
-    pink_cab_list = ["Pink Cab", pink_cab_income, pink_cab_rides, pink_cab_average]
-    yellow_cab_list = ["Yellow Cab", yellow_cab_income, yellow_cab_rides, yellow_cab_average]
+    #pink_cab_list = ["Pink Cab", pink_cab_income, pink_cab_rides, pink_cab_average]
+    #yellow_cab_list = ["Yellow Cab", yellow_cab_income, yellow_cab_rides, yellow_cab_average]
 
-    fig, ax = plt.subplots(figsize=((10, 8)))
-    fig.patch.set_visible(False)
-    ax.axis('off')
-    ax.axis('tight')
+    celltext = [["Total Income", pink_cab_income, yellow_cab_income], ["Total rides",pink_cab_rides, yellow_cab_rides],
+                ["Average price per ride", pink_cab_average, yellow_cab_average] ]
 
-    table = plt.table(cellText=[pink_cab_list, yellow_cab_list],
+
+    #fig, ax = plt.plot(figsize=((10, 8)))
+    #fig.patch.set_visible(False)
+    #ax.axis('off')
+    #ax.axis('tight')
+    fig = plt.figure()
+    fig.set_size_inches((10,8))
+    ax = plt.Axes(fig, [0., 0., 1., 1.])
+    ax.set_axis_off()
+    fig.add_axes(ax)
+    table = plt.table(cellText= celltext,
                       colLabels=columns, loc='center')
-    table.set_fontsize(24)
+    plt.axis('off')
+    table.set_fontsize(12)
     fig.tight_layout()
     plt.savefig(IMAGESDIR + "totalIncomeTable.png")
-    #plt.show()
+    plt.show()
 
 def cityIncomeHistogram(merged_dataset):
 
@@ -154,7 +165,7 @@ def cityIncomeHistogram(merged_dataset):
 
 def yearsIncomes(merged_dataset):
 
-    years_earnings =merged_dataset.groupby(["Company", "Date of Travel"]).sum()["Price Charged"]
+    years_earnings = merged_dataset.groupby(["Company", "Date of Travel"]).sum()["Price Charged"]
     years_expenditures = merged_dataset.groupby(["Company", "Date of Travel"]).sum()["Cost of Trip"]
 
     years_list = ["2016","2017","2018"]
@@ -272,9 +283,10 @@ def ageAnalysis(merged_dataset):
 
     # add both dictionaries values
     overall_income = dict(Counter(pink_cab_ages_classes_incomes) + Counter(yellow_cab_ages_classes_incomes))
-    plt.pie(overall_income.values(), labels=ages_classes, startangle=90, shadow=True, autopct='%1.1f%%')
-    plt.title('Cab Market pie plot')
-    plt.savefig(scriptPath+"/piePlot.png")
+    plt.figure(figsize=(13,5))
+    plt.pie(overall_income.values(), labels=ages_classes, startangle=90, autopct='%1.1f%%')
+    plt.title('Cab Market pie plot per age class')
+    plt.savefig(IMAGESDIR+"/piePlot.png")
 
     plotBar(ages_classes, pink_cab_ages_classes_incomes.values(), yellow_cab_ages_classes_incomes.values(),
             "Age class", "Company Income", "Company Income per age class", "ageAnalysis", rotate="horizontal")
